@@ -77,6 +77,7 @@ The actual costs will vary significantly based on:
 - Snowflake usage patterns
 - Regional pricing differences
 - Specific security and compliance requirements
+  
 | Component | Description | Pricing Model | Small (Dev/Test) | Medium (Production) | Large (Enterprise) |
 |-----------|-------------|---------------|------------------|--------------------|--------------------|
 | AWS Glue | Data Processing | $0.44 per DPU-Hour | $264 | $500 | $1,000+ |
