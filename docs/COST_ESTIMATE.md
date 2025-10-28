@@ -17,13 +17,6 @@ AWS Glue (Data Processing)
   - Daily incremental: 1-10GB
   - Monthly Cost: $50-300 (depending on data volume)
 
- SAP S/4HANA Infrastructure (AWS)
-Based on the CloudFormation template deployment:
-- EC2 Instances: For S/4HANA fully activated appliance
-  - Estimated cost: $500-2,000/month depending on instance size 
-- EBS Storage: For SAP database and application storage
-  - Estimated cost: $100-500/month
-
  Snowflake Integration Costs
 - Data Transfer: Between AWS and Snowflake
   - Inter-region transfer: $0.02-0.09 per GB 
@@ -59,10 +52,9 @@ Based on the CloudFormation template deployment:
 
  Cost Optimization Recommendations
 
-1. Use Reserved Instances: Can reduce EC2 costs by up to 86% 
-2. Optimize Glue Jobs: Right-size DPUs and minimize runtime 
-3. Implement Data Lifecycle Policies: Move older data to cheaper S3 storage classes
-4. Monitor Data Transfer: Optimize cross-region transfers to minimize costs 
+1. Optimize Glue Jobs: Right-size DPUs and minimize runtime 
+2. Implement Data Lifecycle Policies: Move older data to cheaper S3 storage classes
+3. Monitor Data Transfer: Optimize cross-region transfers to minimize costs 
 
  Additional Considerations
 
@@ -82,10 +74,8 @@ The actual costs will vary significantly based on:
 |-----------|-------------|---------------|------------------|--------------------|--------------------|
 | AWS Glue | Data Processing | $0.44 per DPU-Hour | $264 | $500 | $1,000+ |
 | Amazon S3 | Data Storage | $0.023 per GB/month | $50 | $150 | $300 |
-| SAP S/4HANA EC2 | Compute Infrastructure | Variable by instance | $500 | $1,200 | $2,000+ |
-| EBS Storage | Database Storage | Variable | Included in SAP | Included in SAP | Included in SAP |
 | Data Transfer | AWS-Snowflake | $0.02-0.09 per GB | $50 | $100 | $200 |
 | Snowflake Integration | Additional Services | Variable | - | $200 | Variable |
 | Additional AWS Services | VPC, CloudWatch, etc. | Variable | - | - | $100 |
-| **TOTAL MONTHLY COST** | **All Components** | **-** | **~$864** | **~$2,150** | **~$3,600+** |
+| **TOTAL MONTHLY COST** | **All Components** | **-** | **~$364** | **~$950** | **~$3,600+** |
 
