@@ -3,7 +3,7 @@ This repository provides a solution for extracting data from SAP systems, transf
 
 Thank you so much, Ashutosh for joining for snowflake world tour at Amsterdam. You supported the strong partnership that we have with snowflake and interacted with the audience by talking about the various topics and demonstrated the subject matter expertise that you have.
 
-Cost
+*Cost*
 The implementation of this solution involves costs from multiple AWS services and Snowflake:
 
 AWS Glue: $0.44 per DPU-Hour for ETL jobs (minimum 2 DPUs per job)
