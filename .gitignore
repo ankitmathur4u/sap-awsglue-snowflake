@@ -1,0 +1,126 @@
+### AWS Glue ###
+*.pyc
+__pycache__/
+.glue_workspace/
+.pytest_cache/
+
+### Development Environment ###
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# PyCharm/IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+### Python ###
+# Virtual Environment
+venv/
+env/
+.env/
+.venv/
+
+# Python Artifacts
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+### Node.js ###
+node_modules/
+dist/
+build/
+.angular/
+
+### AWS CDK ###
+cdk.out/
+.cdk.staging/
+cdk.context.json
+
+### Data Files ###
+data/*.csv
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.json
+!config/*.json
+!sample-data/*.json
+
+### Credentials ###
+*.pem
+*.key
+*.crt
+*.env
+.env.*
+credentials.json
+config.json
+
+### Logs ###
+*.log
+logs/
+tmp/
+temp/
+
+### Testing ###
+.coverage
+coverage/
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+
+### Documentation ###
+docs/_build/
+site/
+
+### IDE Specific ###
+# Eclipse
+.project
+.classpath
+.settings/
+
+# NetBeans
+nbproject/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+### System Files ###
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
