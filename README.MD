@@ -206,6 +206,95 @@ aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID
     echo "Job: $(aws glue get-job --job-name sap-to-snowflake-etl &>/dev/null && echo '✅' || echo '❌')" && \
     echo "Last Run: $(aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID --query JobRun.JobRunState --output text)"
 
+## Next Steps (required)
+
+1. Scale AWS Glue Workers: Adjust --number-of-workers and --worker-type based on data volume (e.g., increase workers for larger datasets)
+2. Optimize Memory Settings: Modify --conf spark.driver.memory and --conf spark.executor.memory for better performance
+3. Customize ETL Logic: Adapt sap_to_snowflake.py script to include specific data transformations, filters, or business rules
+4. Enhanced Security: Add VPC endpoints, implement column-level encryption, or integrate with AWS KMS for additional security
+5. Data Quality Checks: Include custom validation rules in the ETL script to ensure data integrity
+6. Monitoring: Set up CloudWatch alarms for job failures, data quality issues, or performance metrics
+7. Cost Optimization: Implement job bookmarking for incremental loads to reduce processing time and costs
+8. Error Handling: Add custom error handling and notification mechanisms (e.g., SNS topics for job failures)
+9. Performance Tuning: Adjust Snowflake warehouse size and implement table clustering based on query patterns
+10. Scheduling: Modify the default cron expression (cron(0 2 * * ? *)) to match your business requirements
+
+
+
+## Cleanup (required)
+    Delete AWS Glue Resources
+
+
+    1. Delete Glue trigger (if created)
+
+        aws glue delete-trigger —name daily-sap-to-snowflake
+
+    2. Delete Glue job
+
+        aws glue delete-job —job-name sap-to-snowflake-etl
+
+    3. Delete Glue connections
+
+        aws glue delete-connection —connection-name sap-connection
+        aws glue delete-connection —connection-name snowflake-connection
+
+    4. Empty and Delete S3 Bucket
+
+        Empty the bucket first (required before deletion)
+        aws s3 rm s3://$BUCKET_NAME —recursive
+
+    5. Delete the bucket
+        
+        aws s3 rb s3://$BUCKET_NAME
+
+    6. Delete AWS Secrets Manager Secret
+
+         Delete secret with recovery window
+
+        aws secretsmanager delete-secret \
+          —secret-id sap-snowflake-credentials \
+          —recovery-window-in-days 7
+    
+        Or force delete without recovery window
+
+        aws secretsmanager delete-secret \
+        —secret-id sap-snowflake-credentials \
+          —force-delete-without-recovery
+
+    7. Remove IAM Role and Policies
+
+        Detach policies
+
+        aws iam detach-role-policy —role-name GlueETLRole-SAP-Snowflake \
+          —policy-arn arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+
+    8. Delete role
+
+        aws iam delete-role —role-name GlueETLRole-SAP-Snowflake
+
+
+    9. Verify Resource Deletion
+
+
+    10. Run validation checks to ensure cleanup
+
+        echo "Cleanup Validation:" && \
+        echo "S3: $(aws s3 ls s3://$BUCKET_NAME 2>&1 | grep -q 'NoSuchBucket' && echo '✅' || echo '❌')" && \
+        echo "IAM: $(aws iam get-role —role-name GlueETLRole-SAP-Snowflake 2>&1 | grep -q 'NoSuchEntity' && echo '✅' || echo '❌')" && \
+        echo "Job: $(aws glue get-job —job-name sap-to-snowflake-etl 2>&1 | grep -q 'EntityNotFoundException' && echo '✅' || echo '❌')“
+
+
+## Notices ( required )
+
+Include below mandatory legal disclaimer for Guidance
+
+*Customers are responsible for making their own independent assessment of the information in this Guidance. This Guidance: (a) is for informational purposes only, (b) represents AWS current product offerings and practices, which are subject to change without notice, and (c) does not create any commitments or assurances from AWS and its affiliates, suppliers or licensors. AWS products or services are provided “as is” without warranties, representations, or conditions of any kind, whether express or implied. AWS responsibilities and liabilities to its customers are controlled by AWS agreements, and this Guidance is not part of, nor does it modify, any agreement between AWS and its customers.*
+
+
+## Authors (optional)
+
+Ankit Mathur, Abhijeet Jangam
+
 
 
 
