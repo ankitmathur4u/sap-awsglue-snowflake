@@ -82,7 +82,7 @@ Total: ~$3,600+/month
 | **TOTAL MONTHLY COST** | **All Components** | **-** | **~$364** | **~$950** | **~$3,600+** |
 
 
-## Prerequisites (required)
+## Prerequisites (#prerequisites-required)
 SAP to Snowflake Data Integration Using AWS Glue
 
 Prerequisites
