@@ -228,7 +228,7 @@ Run ETL Job
         "--snowflake_table":"SALES_ORDERS"
       }' --query JobRunId --output text)
 
-# Monitor execution
+Monitor execution
     aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID
 
 Expected Output
