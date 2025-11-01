@@ -13,7 +13,7 @@ This guidance demonstrates how to build an automated data pipeline that extracts
 5. [Running the Guidance](#running-the-guidance-required)
 6. [Next Steps](#next-steps-required)
 7. [Cleanup](#cleanup-required)
-8. [Notices](#notices-optional)
+8. [Notices](#notices-required)
 
 ## Overview (required)
 
@@ -162,7 +162,7 @@ AWS Glue jobs run on a managed Apache Spark environment independent of the opera
 
 aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID
 
-## Deployment Validation  (required)
+## Deployment Validation (required)
 
 1. Verify S3 bucket and ETL script
 
@@ -205,6 +205,49 @@ aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID
     echo "IAM: $(aws iam get-role --role-name GlueETLRole-SAP-Snowflake &>/dev/null && echo '✅' || echo '❌')" && \
     echo "Job: $(aws glue get-job --job-name sap-to-snowflake-etl &>/dev/null && echo '✅' || echo '❌')" && \
     echo "Last Run: $(aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID --query JobRun.JobRunState --output text)"
+
+## Running the Guidance (required)
+
+Input Parameters
+
+    {
+      "sap_table": "VBAK",  // SAP Sales Document Header table
+      "limit": 10,          // Process 10 records for testing
+      "target_table": "SALES_ORDERS"
+    }
+
+
+Run ETL Job
+
+    # Start job with sample parameters
+    JOB_RUN_ID=$(aws glue start-job-run \
+      --job-name sap-to-snowflake-etl \
+      --arguments '{
+        "--sap_table":"VBAK",
+        "--limit":"10",
+        "--snowflake_table":"SALES_ORDERS"
+      }' --query JobRunId --output text)
+
+# Monitor execution
+    aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID
+
+Expected Output
+
+    Job Run Status: SUCCEEDED
+    Records Processed: 10
+    Duration: 2m 15s
+
+Verify Results in Snowflake
+
+    -- Connect to Snowflake and run:
+    SELECT * FROM SALES_ORDERS LIMIT 5;
+
+Success Criteria
+
+    Job status shows "SUCCEEDED"
+    Data appears in Snowflake table
+    No errors in CloudWatch logs
+    
 
 ## Next Steps (required)
 
