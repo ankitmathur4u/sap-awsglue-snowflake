@@ -109,7 +109,7 @@ Prerequisites
   - Python 3.7 or higher
   - Git client
 
-### Operating System (required)
+### Operating System 
 
 This solution can be deployed and operated from the following operating systems:
 
@@ -118,4 +118,48 @@ This solution can be deployed and operated from the following operating systems:
 - macOS (10.14 Mojave or newer)
 
 AWS Glue jobs run on a managed Apache Spark environment independent of the operating system used for deployment.
+
+## Deployment Steps
+
+1. Clone repository and setup environment
+
+    git clone https://github.com/sfc-gh-drichert/sap-awsglue-snowflake.git && cd sap-awsglue-snowflake && python -m venv venv && source venv/bin/activate && pip install -r requirements.txt
+
+
+2. Configure AWS credentials
+
+    aws configure  # Enter your AWS access key, secret key, region, and output format
+
+3. Create S3 bucket and store name
+
+    export BUCKET_NAME=sap-snowflake-integration-$(aws sts get-caller-identity --query Account --output text) && aws s3 mb s3://$BUCKET_NAME
+
+4. Create IAM role for Glue
+
+    aws iam create-role --role-name GlueETLRole-SAP-Snowflake --assume-role-policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"glue.amazonaws.com"},"Action":"sts:AssumeRole"}]}' && aws iam attach-role-policy --role-name GlueETLRole-SAP-Snowflake --policy-arn arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+
+5. Store credentials in Secrets Manager
+
+    aws secretsmanager create-secret --name sap-snowflake-credentials --secret-string '{"sap_username":"your-sap-user","sap_password":"your-sap-pass","snowflake_user":"your-sf-user","snowflake_password":"your-sf-pass"}'
+
+6. Create AWS Glue connections
+
+    aws glue create-connection --cli-input-json file://config/sap-connection.json && aws glue create-connection --cli-input-json file://config/snowflake-connection.json
+
+7. Upload ETL script to S3
+
+    aws s3 cp scripts/sap_to_snowflake.py s3://$BUCKET_NAME/scripts/
+
+8. Create and start AWS Glue job
+
+    aws glue create-job --name sap-to-snowflake-etl --role GlueETLRole-SAP-Snowflake --command "Name=glueetl,ScriptLocation=s3://$BUCKET_NAME/scripts/sap_to_snowflake.py" --connections "Connections=sap-connection,snowflake-connection"
+
+9. Run test job and capture ID
+
+    export JOB_RUN_ID=$(aws glue start-job-run --job-name sap-to-snowflake-etl --arguments '{"--limit":"10"}' --query JobRunId --output text)
+
+10. Monitor job status
+
+aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID
+
 
