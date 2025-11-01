@@ -82,7 +82,7 @@ Total: ~$3,600+/month
 | **TOTAL MONTHLY COST** | **All Components** | **-** | **~$364** | **~$950** | **~$3,600+** |
 
 
-## Prerequisites (#prerequisites-required)
+## Prerequisites (required)
 SAP to Snowflake Data Integration Using AWS Glue
 
 Prerequisites
@@ -109,7 +109,7 @@ Prerequisites
   - Python 3.7 or higher
   - Git client
 
-### Operating System 
+### Operating System (required)
 
 This solution can be deployed and operated from the following operating systems:
 
@@ -119,7 +119,7 @@ This solution can be deployed and operated from the following operating systems:
 
 AWS Glue jobs run on a managed Apache Spark environment independent of the operating system used for deployment.
 
-## Deployment Steps
+## Deployment Steps (required)
 
 1. Clone repository and setup environment
 
@@ -161,5 +161,54 @@ AWS Glue jobs run on a managed Apache Spark environment independent of the opera
 10. Monitor job status
 
 aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID
+
+## Deployment Validation  (required)
+
+1. Verify S3 bucket and ETL script
+
+    aws s3 ls s3://$BUCKET_NAME/scripts/sap_to_snowflake.py
+
+2. Check IAM role configuration
+
+    aws iam get-role --role-name GlueETLRole-SAP-Snowflake --query 'Role.[RoleName, Arn]' --output text
+
+3. Validate AWS Secrets Manager
+
+    aws secretsmanager describe-secret --secret-id sap-snowflake-credentials --query 'ARN' --output text
+
+4. Test AWS Glue connections
+
+    aws glue test-connection --name sap-connection
+    aws glue test-connection --name snowflake-connection
+
+5. Verify AWS Glue job setup
+
+    aws glue get-job --job-name sap-to-snowflake-etl --query 'Job.[Name, Role, Command.ScriptLocation]' --output text
+
+6. Run test job and capture status
+
+    JOB_RUN_ID=$(aws glue start-job-run --job-name sap-to-snowflake-etl --arguments '{"--limit":"10"}' --query 'JobRunId' --output text)
+    aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID --query 'JobRun.JobRunState' --output text
+
+7. Check CloudWatch logs for errors
+
+    aws logs get-log-events --log-group-name "/aws-glue/jobs/output" --log-stream-name $JOB_RUN_ID --limit 5
+
+8. Verify data in Snowflake (Connect to Snowflake and run):
+
+    SELECT COUNT(*) FROM YOUR_SNOWFLAKE_DB.YOUR_SNOWFLAKE_SCHEMA.YOUR_SNOWFLAKE_TABLE;
+
+9. Generate quick validation report
+
+    echo "Deployment Status:" && \
+    echo "S3: $(aws s3 ls s3://$BUCKET_NAME &>/dev/null && echo '✅' || echo '❌')" && \
+    echo "IAM: $(aws iam get-role --role-name GlueETLRole-SAP-Snowflake &>/dev/null && echo '✅' || echo '❌')" && \
+    echo "Job: $(aws glue get-job --job-name sap-to-snowflake-etl &>/dev/null && echo '✅' || echo '❌')" && \
+    echo "Last Run: $(aws glue get-job-run --job-name sap-to-snowflake-etl --run-id $JOB_RUN_ID --query JobRun.JobRunState --output text)"
+
+
+
+
+
 
 
